@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZETA COMMAND</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c1d, #1a1a2e);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Particle background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(10, 10, 30, 0.7);
+            border-bottom: 1px solid rgba(255, 0, 92, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: #ff005c;
+            text-shadow: 0 0 15px rgba(255, 0, 92, 0.7);
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 5;
+            gap: 30px;
+        }
+        
+        .half {
+            flex: 1;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .image-frame {
+            width: 100%;
+            height: 65vh;
+            min-height: 400px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid rgba(255, 0, 92, 0.3);
+            background: rgba(0, 0, 20, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .image-frame:hover {
+            border-color: rgba(255, 0, 92, 0.6);
+            box-shadow: 0 0 30px rgba(255, 0, 92, 0.4);
+            transform: translateY(-5px);
+        }
+        
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .image-frame:hover img {
+            transform: scale(1.05);
+        }
+        
+        .target-name {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .target-id {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            color: #ff005c;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        
+        .info-box {
+            width: 100%;
+            padding: 20px;
+            background: rgba(30, 30, 50, 0.5);
+            border: 1px solid rgba(255, 0, 92, 0.4);
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .info-box:hover {
+            background: rgba(50, 50, 80, 0.6);
+            border-color: rgba(255, 0, 92, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 0, 92, 0.3);
+        }
+        
+        .info-title {
+            color: #ff005c;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .info-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        
+        .info-btn {
+            background: linear-gradient(45deg, #ff005c, #d4004e);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(255, 0, 92, 0.3);
+        }
+        
+        .info-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 92, 0.5);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .modal-content {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(10, 10, 20, 0.95);
+            border: 2px solid #ff005c;
+            border-radius: 15px;
+            overflow: hidden;
+            color: #fff;
+            position: relative;
+            box-shadow: 0 0 40px rgba(255, 0, 92, 0.5);
+        }
+        
+        .modal-header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-bottom: 1px solid #ff005c;
+            text-align: center;
+        }
+        
+        .modal-title {
+            color: #ff005c;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255, 0, 92, 0.7);
+        }
+        
+        .modal-subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .intel-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .intel-card:hover {
+            background: rgba(20, 20, 40, 0.7);
+            border-color: #ff005c;
+        }
+        
+        .intel-label {
+            font-weight: bold;
+            color: #ff3366;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .intel-value {
+            font-size: 1.2rem;
+            word-break: break-word;
+            padding-left: 32px;
+        }
+        
+        .map-link {
+            display: inline-block;
+            background: rgba(255, 0, 92, 0.2);
+            color: #ff99bb;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            border: 1px solid #ff005c;
+        }
+        
+        .map-link:hover {
+            background: rgba(255, 0, 92, 0.4);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #ff005c;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .close-btn:hover {
+            color: #fff;
+            background: rgba(255, 0, 92, 0.7);
+            transform: rotate(90deg);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255, 0, 92, 0.2);
+            margin-top: 30px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .image-frame {
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+    
+    <div class="header">
+        <h1>Get Fucked By DR1NZY</h1>
+        <p>DR1NZY OT - ACCESS LEVEL: DR1NZY</p>
+    </div>
+    
+    <div class="container">
+        <!-- Argisi Side - Restored to original -->
+        <div class="half">
+            <div class="image-frame">
+                <img src="https://cdn.discordapp.com/attachments/1363615802284048476/1385290530854010881/image.png?ex=685587d8&is=68543658&hm=5b530125fc127f7e79ee8176ed02682d01f51651699f2d5450314fe66e9a5e41&" alt="Argisi">
+                <div class="target-name">ARGISI</div>
+                <div class="target-id">TARGET ID: Argis</div>
+            </div>
+            <div class="info-box" id="argisiBtn">
+                <div class="info-title">ARGISI'S DOX</div>
+                <div class="info-subtitle">Click to view classified intelligence</div>
+                <button class="info-btn">
+                    <i class="fas fa-file-alt"></i> CLICK
+                </button>
+            </div>
+        </div>
+        
+        <!-- Lindi Side - Updated with new information -->
+        <div class="half">
+            <div class="image-frame">
+                <img src="https://cdn.discordapp.com/attachments/1363615802284048476/1385265869638078575/20240815_132900-1.jpg?ex=685570e0&is=68541f60&hm=c81d35b3cfc782eb4e9403fdda496a08e244ba86b2a643cea4928001e9a6d505&" alt="Lindi">
+                <div class="target-name">LINDI</div>
+                <div class="target-id">TARGET ID: WIGSAW-9</div>
+            </div>
+            <div class="info-box" id="lindiBtn">
+                <div class="info-title">LINDI'S DOX</div>
+                <div class="info-subtitle">Click to view classified intelligence</div>
+                <button class="info-btn">
+                    <i class="fas fa-file-alt"></i> CLICK
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Argisi Modal - Restored to original -->
+    <div id="argisiModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title">ARGISI CLASSIFIED DOX</h2>
+                <p class="modal-subtitle">LEVEL 9 CLEARANCE REQUIRED</p>
+            </div>
+            <div class="modal-body">
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fab fa-discord"></i> Discord:
+                    </div>
+                    <div class="intel-value">argis.</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-id-card"></i> Discord ID:
+                    </div>
+                    <div class="intel-value">1110668116997976135</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-network-wired"></i> IP Address:
+                    </div>
+                    <div class="intel-value">185.30.146.79</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-phone"></i> Phone Number:
+                    </div>
+                    <div class="intel-value">+355 6953 59564</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fab fa-tiktok"></i> TikTok:
+                    </div>
+                    <div class="intel-value">argisiiii</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-map-marker-alt"></i> Location:
+                    </div>
+                    <div class="intel-value">Vaqarr,Albania</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-globe-europe"></i> Coordinates:
+                    </div>
+                    <div class="intel-value">Lat: 41.31, Long: 19.76</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-map-marked-alt"></i> Google Maps:
+                    </div>
+                    <div class="intel-value">
+                        <a href="https://www.google.com/maps/place/Vaqarr,+Albania/@41.2991536,19.7439551,1726m/data=!3m2!1e3!4b1!4m6!3m5!1s0x13502ff11c99ed81:0xeae25f78c44e3e6f!8m2!3d41.299319!4d19.7435417!16s%2Fm%2F04zx14f?entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D" 
+                           target="_blank" 
+                           class="map-link">
+                            <i class="fas fa-external-link-alt"></i> Target Location Recon
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lindi Modal - Updated with new information -->
+    <div id="lindiModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title">LINDI CLASSIFIED DOX</h2>
+                <p class="modal-subtitle">LEVEL 9 CLEARANCE REQUIRED</p>
+            </div>
+            <div class="modal-body">
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fab fa-discord"></i> Discord:
+                    </div>
+                    <div class="intel-value">devwizard2</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-id-card"></i> Discord ID:
+                    </div>
+                    <div class="intel-value">1351677561121275914</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-network-wired"></i> IP Address:
+                    </div>
+                    <div class="intel-value">141.98.141.221</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-phone"></i> Phone Number:
+                    </div>
+                    <div class="intel-value">Unknown</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fab fa-instagram"></i> Instagram:
+                    </div>
+                    <div class="intel-value">His parents dont let him open one</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-map-marker-alt"></i> Location:
+                    </div>
+                    <div class="intel-value">Petrele, Albania</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-globe-europe"></i> Coordinates:
+                    </div>
+                    <div class="intel-value">Lat: 41.27, Long: 19.86</div>
+                </div>
+                
+                <div class="intel-card">
+                    <div class="intel-label">
+                        <i class="fas fa-map-marked-alt"></i> Google Maps:
+                    </div>
+                    <div class="intel-value">
+                        <a href="https://www.google.com/maps/place/Petrel%C3%AB,+Albania/@41.2541938,19.8574125,1727m/data=!3m2!1e3!4b1!4m6!3m5!1s0x135039f4dff6e697:0xd3960e84b33464ee!8m2!3d41.2559234!4d19.8581406!16s%2Fm%2F02w4zdq?entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D" 
+                           target="_blank" 
+                           class="map-link">
+                            <i class="fas fa-external-link-alt"></i> Target Location Recon
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Get Fucked By Dr1nzyhttps://www.google.com/maps/place/Petrel%C3%AB,+Albania/@41.2541938,19.8574125,1727m/data=!3m2!1e3!4b1!4m6!3m5!1s0x135039f4dff6e697:0xd3960e84b33464ee!8m2!3d41.2559234!4d19.8581406!16s%2Fm%2F02w4zdq?entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D © 2025 | CLASSIFIED SYSTEM | UNAUTHORIZED ACCESS PROHIBITED
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize particles background
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ff005c" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ff005c",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                }
+            }
+        });
+        
+        // Modal functionality
+        const argisiModal = document.getElementById("argisiModal");
+        const lindiModal = document.getElementById("lindiModal");
+        const argisiBtn = document.getElementById("argisiBtn");
+        const lindiBtn = document.getElementById("lindiBtn");
+        const closeBtns = document.getElementsByClassName("close-btn");
+        
+        // Open Argisi modal
+        argisiBtn.onclick = function() {
+            argisiModal.style.display = "flex";
+        }
+        
+        // Open Lindi modal
+        lindiBtn.onclick = function() {
+            lindiModal.style.display = "flex";
+        }
+        
+        // Close modals
+        for (let i = 0; i < closeBtns.length; i++) {
+            closeBtns[i].onclick = function() {
+                argisiModal.style.display = "none";
+                lindiModal.style.display = "none";
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target === argisiModal) {
+                argisiModal.style.display = "none";
+            }
+            if (event.target === lindiModal) {
+                lindiModal.style.display = "none";
+            }
+        }
+        
+        // Close with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                argisiModal.style.display = "none";
+                lindiModal.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
